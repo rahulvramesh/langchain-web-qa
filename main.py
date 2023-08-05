@@ -48,20 +48,21 @@ def main():
     # len(docs)
 
     retriever = vectordb.as_retriever(search_kwargs={"k": 10})
+    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
     
-    
+    qa = ConversationalRetrievalChain.from_llm(OpenAI(temperature=0), retriever.as_retriever(), memory=memory)
 
 
-    qa_chain = RetrievalQA.from_chain_type(
-        llm=OpenAI(),
-        chain_type="stuff",
-        retriever=retriever,
-        return_source_documents=True,
-        verbose=True,
-    )
+    # qa_chain = RetrievalQA.from_chain_type(
+    #     llm=OpenAI(),
+    #     chain_type="stuff",
+    #     retriever=retriever,
+    #     return_source_documents=True,
+    #     verbose=True,
+    # )
 
     query = "summarize 262 – AMA #49: Heart rate recovery, strength training, rucking, kidney function, and brain health"
-    llm_response = qa_chain(query)
+    llm_response = qa(query)
     
     #print(llm_response)
     process_llm_response(llm_response)
